@@ -30,9 +30,8 @@ class LuccaAPIClient:
         """
         Récupère la liste des utilisateurs depuis l'API Lucca.
         """
-        endpoint = f'{self.base_url}/api/v3/users'
-        params = params or {}
-        params['formerEmployees'] = 'true'
+        endpoint = f'{self.base_url}/api/v3/users?formerEmployees=true'
+        params = params
         
         try:
             response = requests.get(endpoint, headers=self.headers, params=params)
