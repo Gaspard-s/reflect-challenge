@@ -59,18 +59,18 @@ This command will discover and run all tests located in the `tests/` directory.
 
 **To see if data is incorporate in the db**
   
-    ```sql
+    ```
     sqlite3 reflect_db.sqlite
     ```
 
 **To List the tables**
 
-    ```sql
+    ```
     .tables
     ```
 
 **If you wanna see Users Table**
 
-    ```sql
+    ```
     SELECT * FROM users LIMIT 5;
     ```
