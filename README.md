@@ -31,9 +31,9 @@ Once the installation and configuration steps are complete, you can run the proj
 
 **Run the Main Script**
     
-    ```
+    
     python src/main.py
-    ```
+    
 
 This script will:
 - Initialize the SQLite database if it doesn't exist.
@@ -49,9 +49,9 @@ To ensure the reliability of each function, the project includes unit tests.
 
 **Run the Tests**
 
-    ```
+    
     pytest
-    ```
+    
 
 This command will discover and run all tests located in the `tests/` directory.
 
@@ -65,12 +65,12 @@ This command will discover and run all tests located in the `tests/` directory.
 
 **To List the tables**
 
-    ```
+    
     .tables
-    ```
+    
 
 **If you wanna see Users Table**
 
-    ```
+    
     SELECT * FROM users LIMIT 5;
-    ```
+    
