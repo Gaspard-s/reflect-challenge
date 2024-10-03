@@ -1,5 +1,3 @@
-# tests/test_data_processor.py
-
 import pytest
 import pandas as pd
 from src.data_processor import process_users, process_departments, process_contracts_from_users, transform_user_data

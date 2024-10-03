@@ -1,18 +1,9 @@
-# tests/test_api_client.py
-
 import pytest
 import os
 from unittest.mock import patch
 from src.api_client import LuccaAPIClient
 from dotenv import load_dotenv
 
-# test/conftest.py
-
-import sys
-
-
-# Ajouter le répertoire racine du projet au PYTHONPATH
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Charger les variables d'environnement pour les tests
 load_dotenv(dotenv_path='tests/.env.test')
@@ -23,7 +14,6 @@ def api_client():
 
 @patch('src.api_client.requests.get')
 def test_get_users_success(mock_get, api_client):
-    # Simuler une réponse API réussie
     mock_response = mock_get.return_value
     mock_response.status_code = 200
     mock_response.json.return_value = {

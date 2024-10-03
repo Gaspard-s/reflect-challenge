@@ -1,10 +1,6 @@
-# api_client.py
-
 import requests
 from typing import Dict, Any, List, Optional
 import logging
-from dotenv import load_dotenv
-import os
 
 class LuccaAPIClient:
     def __init__(self):

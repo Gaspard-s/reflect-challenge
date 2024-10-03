@@ -1,5 +1,3 @@
-# src/db_manager.py
-
 import pandas as pd
 from sqlalchemy import inspect
 import logging

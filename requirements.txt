@@ -1,5 +1,6 @@
-# requirements.txt
 requests
 pandas
+SQLAlchemy
 python-dotenv
-sqlalchemy
+pytest
+logging
