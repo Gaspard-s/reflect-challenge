@@ -2,6 +2,47 @@
 
 Author : Gaspard Saliou
 
+# Présentation projet
+
+◊Bien sûr ! Voici une courte description de chaque fichier présent dans le répertoire `src` de votre projet :
+
+---
+
+### 1. `main.py`
+
+**Description** :  
+C'est le point d'entrée principal du projet. Il coordonne l'exécution globale en effectuant les actions suivantes :
+- Initialisation de la base de données SQLite si elle n'existe pas.
+- Récupération des utilisateurs et des départements depuis l'API Lucca.
+- Traitement et transformation des données récupérées.
+- Insertion des nouveaux enregistrements dans la base de données tout en évitant les doublons.
+- Affichage des informations dans la console.
+
+### 2. `api_client.py`
+
+**Description** :  
+Ce fichier gère les interactions avec l'API Lucca. Il contient la classe `LuccaAPIClient` qui :
+- Configure les en-têtes et l'authentification nécessaires pour les requêtes API.
+- Fournit des méthodes pour récupérer les données des utilisateurs et des départements via des requêtes HTTP GET.
+- Gère les erreurs liées aux requêtes API.
+
+### 3. `data_processor.py`
+
+**Description** :  
+Ce fichier est responsable du traitement et de la transformation des données brutes récupérées depuis l'API. Il inclut les fonctions suivantes :
+- **Extraction des IDs** : `extract_user_ids` et `extract_role_ids` pour extraire les identifiants des utilisateurs et des rôles à partir des champs JSON.
+- **Transformation des données** : `transform_user_data` pour nettoyer et transformer les données des utilisateurs (par exemple, extraire les noms des départements, entités légales, rôles principaux, etc.).
+- **Traitement des contrats** : `process_contracts_from_users` pour extraire les informations contractuelles des utilisateurs.
+- **Nettoyage des données** : `clean_user_data` pour supprimer les colonnes inutiles liées aux contrats après l'extraction.
+
+### 4. `db_manager.py`
+
+**Description** :  
+Ce fichier gère toutes les opérations liées à la base de données SQLite. Il contient les fonctions suivantes :
+- **Initialisation de la base de données** : `initialize_db` pour créer les tables (`users`, `contracts`, `departments`) si elles n'existent pas déjà.
+- **Insertion des enregistrements** : `insert_new_records` pour insérer de nouveaux enregistrements dans les tables en évitant les doublons basés sur une colonne identifiant (`id_column`).
+
+
 # Installation
 
 To set up the project on your local machine, follow these steps:
