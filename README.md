@@ -29,21 +29,19 @@ To set up the project on your local machine, follow these steps:
 
 Once the installation and configuration steps are complete, you can run the project to fetch and store data.
 
-**replace the token and url used to access the url in launch.sh with the correct values**
+**replace the token and url in launch.sh with the correct values**
     
     export API_URL= url
     export LUCCA_API_TOKEN= token
 
 **If the launch file has not the permission to be executed**
 
-    chmod chmod 755 launch.sh
+    chmod 755 launch.sh
 
 **Run the Main Script**
     
-    
     ./launch.sh
     
-
 This script will:
 - Initialize the SQLite database if it doesn't exist.
 - Fetch users and departments from the Lucca API.
