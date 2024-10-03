@@ -1,11 +1,12 @@
 import requests
 from typing import Dict, Any, List, Optional
 import logging
+import os
 
 class LuccaAPIClient:
     def __init__(self):
-        self.base_url = 'https://reflect2-sandbox.ilucca-demo.net'
-        self.api_token = 'caf8058b-b7ec-4df2-85e3-a673b5466e97'
+        self.base_url = os.getenv('API_URL')
+        self.api_token = os.getenv('LUCCA_API_TOKEN')
 
         if not self.api_token:
             raise ValueError("Le token API est manquant.")

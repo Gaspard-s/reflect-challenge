@@ -29,10 +29,19 @@ To set up the project on your local machine, follow these steps:
 
 Once the installation and configuration steps are complete, you can run the project to fetch and store data.
 
+**replace the token and url used to access the url in launch.sh with the correct values**
+    
+    export API_URL= url
+    export LUCCA_API_TOKEN= token
+
+**If the launch file has not the permission to be executed**
+
+    chmod chmod 755 launch.sh
+
 **Run the Main Script**
     
     
-    python src/main.py
+    ./launch.sh
     
 
 This script will:
@@ -40,7 +49,7 @@ This script will:
 - Fetch users and departments from the Lucca API.
 - Process and transform the fetched data.
 - Insert new records into the SQLite database, ensuring no duplicates.
-- Log the operations to both the console and a log file located at `data/app.log`.
+- Log the operations to the console.
 
 
 # Testing
@@ -48,11 +57,9 @@ This script will:
 To ensure the reliability of each function, the project includes unit tests.
 
 **Run the Tests**
-
     
     pytest
     
-
 This command will discover and run all tests located in the `tests/` directory.
 
 # Database access
