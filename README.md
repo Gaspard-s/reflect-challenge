@@ -58,7 +58,7 @@ This command will discover and run all tests located in the `tests/` directory.
 # Database access
 
 **To see if data is incorporate in the db**
-    
+  
     ```
     sqlite3 reflect_db.sqlite
     ```
