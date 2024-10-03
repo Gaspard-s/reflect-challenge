@@ -4,10 +4,6 @@ Author : Gaspard Saliou
 
 # Présentation projet
 
-◊Bien sûr ! Voici une courte description de chaque fichier présent dans le répertoire `src` de votre projet :
-
----
-
 ### 1. `main.py`
 
 **Description** :  
