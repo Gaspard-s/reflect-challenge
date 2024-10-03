@@ -1,20 +1,11 @@
-# src/main.py
-
 from api_client import LuccaAPIClient
-from data_processor import (
-    process_users,
-    process_departments,
-    process_contracts_from_users,
-    transform_user_data,
-    clean_user_data
-)
+from data_processor import (process_users,process_departments,process_contracts_from_users,transform_user_data,clean_user_data)
 from db_manager import initialize_db, insert_new_records
 import os
 import sys
 import logging
 import pandas as pd
 from sqlalchemy import create_engine
-import json
 
 # Configurer le logger
 logging.basicConfig(
@@ -29,7 +20,7 @@ logging.basicConfig(
 def main():
     # Définir le chemin absolu pour la base de données
     db_path = os.path.abspath('reflect_db.sqlite')
-    DATABASE_URI = os.getenv('DATABASE_URI', f'sqlite:///{db_path}')
+    DATABASE_URI = f'sqlite:///{db_path}'
     engine = create_engine(DATABASE_URI)
 
     # Initialiser la base de données uniquement si le fichier n'existe pas
@@ -49,7 +40,7 @@ def main():
     # Récupérer les utilisateurs depuis l'API
     logging.info("Récupération des utilisateurs...")
     users = client.get_users(params={
-        'fields': 'id,name,url,displayName,modifiedOn,lastName,firstName,login,mail,birthDate,department,rolePrincipal,legalEntity,employeeNumber,dtContractStart,dtContractEnd,applicationData'})
+        'fields': 'id,name,url,displayName,modifiedOn,lastName,firstName,login,mail,birthDate,department,manager,rolePrincipal,legalEntity,employeeNumber,dtContractStart,dtContractEnd,applicationData,habilitedRoles'})
 
     if not users:
         logging.error("Aucun utilisateur récupéré. Vérifiez le token API et les permissions.")
@@ -65,7 +56,7 @@ def main():
     if not contracts_df.empty:
         logging.info("Insertion des nouveaux contrats dans la base de données...")
         inserted_contracts = insert_new_records(contracts_df, engine, 'contracts', id_column='user_id')
-        logging.info(f"{inserted_contracts} nouveaux contrats insérés dans la base de données.")
+        logging.info(f"Nouveaux contrats insérés dans la base de données.")
     else:
         logging.warning("Aucun contrat extrait des utilisateurs.")
 
@@ -76,12 +67,12 @@ def main():
     logging.info("Insertion des nouveaux utilisateurs dans la base de données...")
     #to_csv = users_df_cleaned.to_csv('data/users.csv', index=False)
     inserted_users = insert_new_records(users_df_cleaned, engine, 'users', id_column='id')
-    logging.info(f"{inserted_users} nouveaux utilisateurs insérés dans la base de données.")
+    logging.info(f"Nouveaux utilisateurs insérés dans la base de données.")
 
     # Récupérer les départements depuis l'API
     logging.info("Récupération des départements...")
     departments = client.get_departments(params={
-        'fields': 'id,name,hierarchy,parentId,headID,users,currentUsers,currentUsersCount',
+        'fields': 'id,name,code,hierarchy,parentId,isActive,position,level,sortOrder,headID,users,currentUsers,currentUsersCount',
     })
 
     if not departments:
@@ -89,17 +80,14 @@ def main():
 
     # Traiter les données des départements
     departments_df = process_departments(departments)
-
+    
     # Insérer uniquement les nouveaux départements
     logging.info("Insertion des nouveaux départements dans la base de données...")
     inserted_departments = insert_new_records(departments_df, engine, 'departments', id_column='id')
-    logging.info(f"{inserted_departments} nouveaux départements insérés dans la base de données.")
+    logging.info(f"Nouveaux départements insérés dans la base de données.")
 
     logging.info("Terminé.")
 
 
 if __name__ == '__main__':
-    # Créer le dossier 'data' s'il n'existe pas
-    if not os.path.exists('data'):
-        os.makedirs('data')
     main()

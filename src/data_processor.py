@@ -5,43 +5,84 @@ import json
 from typing import List, Dict, Any
 
 def process_users(users: List[Dict[str, Any]]) -> pd.DataFrame:
+    """
+    Processus de transformation des données des utilisateurs.
+
+    Args:
+        users (List[Dict[str, Any]]): Liste des utilisateurs.
+
+    Returns:
+        pd.DataFrame: DataFrame contenant les données des utilisateurs.
+    """
     if not users:
         return pd.DataFrame()
     users_df = pd.DataFrame(users)
     return users_df
 
-def transform_user_data(df: pd.DataFrame) -> pd.DataFrame:
+def extract_role_ids(role_field: Any) -> List[int]:
     """
-    Transforme les données des utilisateurs en extrayant les noms des départements,
-    entités légales, rôles principaux et rémunérations théoriques.
+    Extracts a list of role IDs from a JSON-formatted string or a list of role dicts.
 
     Args:
-        df (pd.DataFrame): DataFrame contenant les données des utilisateurs.
+        role_field (str or list): JSON-formatted string or list of role dictionaries.
 
     Returns:
-        pd.DataFrame: DataFrame transformé.
+        List[int]: List of role IDs.
     """
-    # Extraire le nom du département
+    try:
+        if isinstance(role_field, str):
+            roles = json.loads(role_field)
+        elif isinstance(role_field, list):
+            roles = role_field
+        elif role_field is None:
+            return []
+  
+        return [role['name'] for role in roles if isinstance(role, dict) and 'name' in role]
+    except (json.JSONDecodeError, TypeError) as e:
+        return []
+
+def transform_user_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Transforms user data by extracting department names, legal entities, principal roles,
+    theoretical remunerations, and habilited role IDs.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing user data.
+
+    Returns:
+        pd.DataFrame: Transformed DataFrame.
+    """
+    # Extract department name
     df['department'] = df['department'].apply(
         lambda x: x.get('name', 'Unknown') if isinstance(x, dict) else 'Unknown'
     )
     
-    # Extraire le nom de l'entité légale
+    # Extract legal entity name
     df['legalEntity'] = df['legalEntity'].apply(
         lambda x: x.get('name', 'Unknown') if isinstance(x, dict) else 'Unknown'
     )
     
-    # Extraire le nom du rôle principal
+    # Extract principal role name
     df['rolePrincipal'] = df['rolePrincipal'].apply(
         lambda x: x.get('name', 'Unknown') if isinstance(x, dict) else 'Unknown'
     )
+
+    # Extract principal role name
+    df['manager'] = df['manager'].apply(
+        lambda x: x.get('name', 'Unknown') if isinstance(x, dict) else 'Unknown'
+    )
     
-    # Extraire la rémunération théorique
+    # Extract theoretical remuneration
     df['theoreticalRemuneration'] = df['applicationData'].apply(
         lambda x: x.get('theoreticalRemuneration', {}).get('value', 'Unknown') 
         if isinstance(x, dict) else 'Unknown'
     )
     
+    # Extract habilited role IDs and serialize as JSON strings
+    df['habilitedRoles'] = df['habilitedRoles'].apply(extract_role_ids)
+    df['habilitedRoles'] = df['habilitedRoles'].apply(json.dumps)
+    
+    # Drop unnecessary columns
     df.drop(columns=['applicationData'], errors='ignore', inplace=True)
     return df
 
@@ -67,19 +108,51 @@ def process_contracts_from_users(users: List[Dict[str, Any]]) -> pd.DataFrame:
     contracts_df = pd.DataFrame(contracts)
     return contracts_df
 
+
+def extract_user_ids(user_field: Any) -> List[str]:
+    """
+    Extracts a list of user IDs from a JSON-formatted string or a list of user dicts.
+
+    Args:
+        user_field (str or list): JSON-formatted string or list of user dictionaries.
+
+    Returns:
+        List[int]: List of user IDs.
+    """
+    try:
+        if isinstance(user_field, str):
+            users = json.loads(user_field)
+        elif isinstance(user_field, list):
+            users = user_field
+        elif user_field is None:
+            return []
+        return [user['name'] for user in users if isinstance(user, dict) and 'name' in user]
+    except (json.JSONDecodeError, TypeError) as e:
+        return []
+
 def process_departments(departments: List[Dict[str, Any]]) -> pd.DataFrame:
+    """
+    Converts a list of department dictionaries into a pandas DataFrame and extracts user IDs.
+
+    Args:
+        departments (List[Dict[str, Any]]): List of department data.
+
+    Returns:
+        pd.DataFrame: Processed DataFrame with user IDs extracted and serialized.
+    """
     if not departments:
         return pd.DataFrame()
     
     departments_df = pd.DataFrame(departments)
     
-    # Sérialiser les colonnes contenant des listes
-    list_columns = ['users', 'currentUsers']
-    for col in list_columns:
+    # Extract user IDs from 'users' and 'currentUsers' columns
+    for col in ['users', 'currentUsers']:
         if col in departments_df.columns:
-            departments_df[col] = departments_df[col].apply(lambda x: json.dumps(x) if isinstance(x, list) else json.dumps([]))
+            departments_df[col] = departments_df[col].apply(extract_user_ids)
+            departments_df[col] = departments_df[col].apply(json.dumps)  # Serialize to JSON string
     
     return departments_df
+
 
 def clean_user_data(df: pd.DataFrame) -> pd.DataFrame:
     """

@@ -8,15 +8,14 @@ import os
 
 class LuccaAPIClient:
     def __init__(self):
-        load_dotenv()  # Charger les variables d'environnement depuis le fichier .env
-        self.base_url = os.getenv('API_URL', 'https://reflect2-sandbox.ilucca-demo.net')
-        self.api_token = os.getenv('LUCCA_API_TOKEN')  # Utiliser la variable d'environnement
+        self.base_url = 'https://reflect2-sandbox.ilucca-demo.net'
+        self.api_token = 'caf8058b-b7ec-4df2-85e3-a673b5466e97'
 
         if not self.api_token:
             raise ValueError("Le token API est manquant.")
 
         self.headers = {
-            'Authorization': f'lucca application={self.api_token}',  # Maintenir le préfixe 'lucca application='
+            'Authorization': f'lucca application={self.api_token}',
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
@@ -29,13 +28,18 @@ class LuccaAPIClient:
     def get_users(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         Récupère la liste des utilisateurs depuis l'API Lucca.
+
+        Args:
+            params (dict): Paramètres de requête supplémentaires.
+
+        Returns:
+            List[Dict[str, Any]]: Liste des utilisateurs.
         """
         endpoint = f'{self.base_url}/api/v3/users?formerEmployees=true'
         params = params
         
         try:
             response = requests.get(endpoint, headers=self.headers, params=params)
-            self.logger.info(f"Requête GET {response.url} - Statut: {response.status_code}")
 
             if response.status_code == 200:
                 data = response.json()
@@ -47,7 +51,7 @@ class LuccaAPIClient:
                         self.logger.error("Limite de taux atteinte.")
                     return []
 
-                # Extraire 'items' de 'data'
+
                 users = data.get('data', {}).get('items', [])
                 return users
 
@@ -58,10 +62,6 @@ class LuccaAPIClient:
             else:
                 response.raise_for_status()
 
-        except requests.exceptions.HTTPError as http_err:
-            self.logger.error(f'Erreur HTTP lors de la récupération des utilisateurs : {http_err}')
-            return []
-
         except Exception as err:
             self.logger.error(f'Erreur lors de la récupération des utilisateurs : {err}')
             return []
@@ -69,13 +69,18 @@ class LuccaAPIClient:
     def get_departments(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         Récupère la liste des départements depuis l'API Lucca.
+
+        Args:
+            params (dict): Paramètres de requête supplémentaires.
+
+        Returns:
+            List[Dict[str, Any]]: Liste des départements.
         """
         endpoint = f'{self.base_url}/api/v3/departments'
         params = params or {}
         
         try:
             response = requests.get(endpoint, headers=self.headers, params=params)
-            self.logger.info(f"Requête GET {response.url} - Statut: {response.status_code}")
 
             if response.status_code == 200:
                 data = response.json()
@@ -87,12 +92,7 @@ class LuccaAPIClient:
                         self.logger.error("Limite de taux atteinte.")
                     return []
 
-                # Extraire 'items' de 'data'
                 departments = data.get('data', {}).get('items', [])
-
-                if not isinstance(departments, list):
-                    self.logger.error("Le champ 'data' ou 'items' n'est pas une liste.")
-                    return []
 
                 return departments
 
@@ -102,10 +102,6 @@ class LuccaAPIClient:
 
             else:
                 response.raise_for_status()
-
-        except requests.exceptions.HTTPError as http_err:
-            self.logger.error(f'Erreur HTTP lors de la récupération des départements : {http_err}')
-            return []
 
         except Exception as err:
             self.logger.error(f'Erreur lors de la récupération des départements : {err}')
