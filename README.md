@@ -30,7 +30,7 @@ To set up the project on your local machine, follow these steps:
 Once the installation and configuration steps are complete, you can run the project to fetch and store data.
 
 **Run the Main Script**
-
+    
     ```
     python src/main.py
     ```
